@@ -1,0 +1,5 @@
+# URL to uno API. Set as an environment variable to use local instances for testing.
+[[entries]]
+key = "UNO_API_URL"
+default = "https://uno.echo-webkom.no"
+required = true
