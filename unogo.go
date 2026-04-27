@@ -3,6 +3,7 @@ package unogo
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -91,6 +92,31 @@ func (c *Client) GetUser(sessionToken string) (UserResponse, error) {
 	var user UserResponse
 	err = json.NewDecoder(res.Body).Decode(&user)
 	return user, err
+}
+
+func (c *Client) GetProfileImage(sessionToken, userId string) (ProfileImageResponse, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users/%s/image", c.config.Url, userId), nil)
+	if err != nil {
+		return ProfileImageResponse{}, err
+	}
+
+	req.Header.Add("Authorization", "Bearer "+sessionToken)
+
+	res, err := c.client.Do(req)
+	if err != nil {
+		return ProfileImageResponse{}, err
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return ProfileImageResponse{}, unoError(res.StatusCode, "failed to get profile image")
+	}
+
+	imageSource, err := io.ReadAll(res.Body)
+	return ProfileImageResponse{
+		Source: string(imageSource),
+	}, err
 }
 
 func unoError(code int, format string, args ...any) error {

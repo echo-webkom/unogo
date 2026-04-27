@@ -6,6 +6,10 @@ type HealthResponse struct {
 	Status string `json:"status"`
 }
 
+type ProfileImageResponse struct {
+	Source string
+}
+
 type UserResponse struct {
 	ID                         string              `json:"id"`
 	Name                       *string             `json:"name"`
